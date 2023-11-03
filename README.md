@@ -42,7 +42,7 @@ py convertformat.py annotations_val.csv
 
 ```
 > [!IMPORTANT] 
-> YOLO locates labels automatically for each image by replacing the last instance of `/images` in each images path with  `/labels`. Organize the dataset structure as follows:
+> YOLO locates labels automatically for each image by replacing the last instance of `/images` in each images path with  `/labels`. Organize the dataset structure as follows (`images` folder contains the images and `labels` folder contains the annotations files):
 ```
 data
 ├── train
