@@ -71,7 +71,9 @@ names:
 Save the file as `data.yaml` and place it in the `data` folder. 
 
 Or you can run the `generate_yaml.py` script to generate the YAML file by specifying the number of classes and the class names:
-```py generate_yaml.py Zebra,Giraffe,Elephant```
+```
+py generate_yaml.py Zebra,Giraffe,Elephant
+```
 
 ## Training with YOLOv8
 Training the model with YOLOv8 is straightforward.
