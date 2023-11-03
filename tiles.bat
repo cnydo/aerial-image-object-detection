@@ -1,0 +1,1 @@
+for %%f in (*.JPG) do magick convert %%f -crop 7x6+200+200@ +repage +adjoin %%f

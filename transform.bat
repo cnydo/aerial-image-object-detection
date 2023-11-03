@@ -1,0 +1,1 @@
+for %%f in (*.JPG) do magick convert %%f -flop "MVER\MVER-%%f"
