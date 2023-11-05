@@ -18,7 +18,7 @@ https://doi.org/10.1111/2041-210X.13277
 The authors of the paper have provided [ImageMagick](https://imagemagick.org/script/download.php) scripts  to preprocess the training images. They should be run on the `train` folder in the following order:
 1. `tiles.bat` - cut the raw images into training tiles. Each images is divided into $7 \times 6$ tiles with $200$ pixels overlap.
     > [!Note]
-    > The raw images will be still inside the train folder. To delete those, run `remove_raw.py`
+    > **The raw images will be still inside the train folder. To delete those, run `remove_raw.py`**
 2. `transform.bat` - mirror the training tiles. The transformed images are saved inside the `train\MVER` folder. If it doesn't work, try to create the `MVER` folder manually
     > [!Note]
     > If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder
