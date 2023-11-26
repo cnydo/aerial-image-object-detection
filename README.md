@@ -17,14 +17,14 @@ https://doi.org/10.1111/2041-210X.13277
 
 The authors of the paper have provided [ImageMagick](https://imagemagick.org/script/download.php) scripts  to preprocess the training images. They should be run on the `train` folder in the following order:
 1. `tiles.bat` - cut the raw images into training tiles. Each images is divided into $7 \times 6$ tiles with $200$ pixels overlap.
-    > [!Note]
-    > **The raw images will be still inside the train folder. To delete those, run `remove_raw.py`**
+> [!NOTE]
+> **The raw images will be still inside the train folder. To delete those, run `remove_raw.py`**
 2. `transform.bat` - mirror the training tiles. The transformed images are saved inside the `train\MVER` folder. If it doesn't work, try to create the `MVER` folder manually
-    > [!Note]
-    > If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder
+> [!Note]
+> If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder
 3. `cutoff.bat` - script to cut off the training tiles, so that the partially covered bounding boxes were removed as much as possible.
-    > [!Important]
-    > Make sure to move all images inside `MVER` folder to directly inside `train` folder (from `train\MVER` to `train`)
+> [!Important]
+> Make sure to move all images inside `MVER` folder to directly inside `train` folder (from `train\MVER` to `train`)
 
 ### Convert CSV annotations to YOLOv8 format
 
@@ -81,6 +81,18 @@ Or you can run the `generate_yaml.py` script to generate the YAML file by specif
 py generate_yaml.py Zebra,Giraffe,Elephant
 ```
 
+## Display images with bounding boxes 
+Run the `display_bbox.py` (requires: `opencv`) with the following argument:
+- `--data_path`: path to the data directory (which contains two subfolders: `images` and `labels`).
+- `--yaml_path`: path to the YAML file.
+- `--output_dir`(optional): path to the directory where the images will be saved.
+- `--only_with_bbox`(optional, default: `True`): only choose images that have bounding boxes. Accept `'yes', 'true', 't', 'y', '1'` as `True` or `'no', 'false', 'f', 'n', '0'` as `False`. 
+- `--num_samples`(optional, default: `1`): number of sample images to display.
+
+Example usages:
+```
+py display_bbox.py --data_path data\train --yaml_path data\data.yaml --output_dir data\display_bbox --only_with_bbox 1 --num_samples 5 
+```
 ## Training with YOLOv8
 Training the model with YOLOv8 is straightforward.
 1. Install Ultralytics via pip
