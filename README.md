@@ -12,18 +12,20 @@ If you use this dataset, please cite the following paper:
 https://doi.org/10.1111/2041-210X.13277
 
 ## Preprocessing
+> [!CAUTION]
+> The dataset contains some images that are wrongly rotated upside down (180 degrees) for an unknown reason. Rotate them back by 180 degrees to correct the orientation. Check `list of wrong oriented image.txt` to see which images have the wrong orientation.
 
 ### Tiling images
 
 The authors of the paper have provided [ImageMagick](https://imagemagick.org/script/download.php) scripts  to preprocess the training images. They should be run on the `train` folder in the following order:
 1. `tiles.bat` - cut the raw images into training tiles. Each images is divided into $7 \times 6$ tiles with $200$ pixels overlap.
-> [!NOTE]
-> **The raw images will be still inside the train folder. To delete those, run `remove_raw.py`**
+> [!Important]
+> The raw images will be still inside the train folder. To delete those, run `remove_raw.py`
 2. `transform.bat` - mirror the training tiles. The transformed images are saved inside the `train\MVER` folder. If it doesn't work, try to create the `MVER` folder manually
 > [!Note]
 > If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder
 3. `cutoff.bat` - script to cut off the training tiles, so that the partially covered bounding boxes were removed as much as possible.
-> [!Important]
+> [!Warning]
 > Make sure to move all images inside `MVER` folder to directly inside `train` folder (from `train\MVER` to `train`)
 
 ### Convert CSV annotations to YOLOv8 format
