@@ -90,10 +90,10 @@ Run the `display_bbox.py` (requires: `opencv`) with the following argument:
 - `--output_dir`(optional): path to the directory where the images will be saved.
 - `--only_with_bbox`(optional, default: `True`): only choose images that have bounding boxes. Accept `'yes', 'true', 't', 'y', '1'` as `True` or `'no', 'false', 'f', 'n', '0'` as `False`. 
 - `--num_samples`(optional, default: `1`): number of sample images to display.
-
+- `--display` (optional, default: `False`): option to display the image with bounding boxes using opencv
 Example usages:
 ```
-py display_bbox.py --data_path data\train --yaml_path data\data.yaml --output_dir data\display_bbox --only_with_bbox 1 --num_samples 5 
+py display_bbox.py --data_path data\train --yaml_path data\data.yaml --output_dir data\display_bbox --only_with_bbox 1 --num_samples 5 --display 0
 ```
 ## Training with YOLOv8
 Training the model with YOLOv8 is straightforward.
