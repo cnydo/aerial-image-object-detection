@@ -13,6 +13,6 @@ for directory in directories:
     images = list(Path(directory).glob('*.jpg'))
 
     # Move .jpg files to 'images' subdirectory with progress bar
-    for image_path in (pbar:=tqdm(images, desc="Moving images")):
+    for image_path in (pbar:=tqdm(images)):
         pbar.set_description(f"Moving {image_path.name} into {directory}/images")
         shutil.move(str(image_path), str(Path(directory, 'images', image_path.name)))

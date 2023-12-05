@@ -11,7 +11,7 @@ class_names = args.classes.split(',')
 
 # Define your directories
 train_dir = '../train/images'
-val_dir = '../valid/images'
+val_dir = '../val/images'
 test_dir = '../test/images'
 
 # Create a dictionary with your data
@@ -22,8 +22,8 @@ data = {
     'nc': len(class_names),
     'names': {i: name for i, name in enumerate(class_names)}
 }
-print(type(class_names))
+
 # Write the dictionary to a YAML file
-with open('data2.yaml', 'w') as outfile:
+with open('data.yaml', 'w') as outfile:
     yaml.dump(data, outfile, default_flow_style=False)
     print("YAML file created successfully")
