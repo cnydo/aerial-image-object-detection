@@ -13,20 +13,37 @@ https://doi.org/10.1111/2041-210X.13277
 
 ## Preprocessing
 > [!CAUTION]
-> The dataset contains some images that are wrongly rotated upside down (180 degrees) for an unknown reason. Rotate them back by 180 degrees to correct the orientation. Check `list of wrong oriented image.txt` to see which images have the wrong orientation.
+> The dataset contains some images that are wrongly rotated upside down (180 degrees) for an unknown reason. Rotate them back by 180 degrees to correct the orientation. 
+> 
+> Firstly, run `rotate_wrong_oriented_img.py` to quickly rotate images are listed in `list of wrong oriented image.txt`
+> ```
+> py .\rotate_wrong_oriented_img.py
+> ```
+
 
 ### Tiling images
 
 The authors of the paper have provided [ImageMagick](https://imagemagick.org/script/download.php) scripts  to preprocess the training images. They should be run on the `train` folder in the following order:
 1. `tiles.bat` - cut the raw images into training tiles. Each images is divided into $7 \times 6$ tiles with $200$ pixels overlap.
+```
+cd train
+..\tiles.bat
+```
 > [!Important]
-> The raw images will be still inside the train folder. To delete those, run `remove_raw.py`
-2. `transform.bat` - mirror the training tiles. The transformed images are saved inside the `train\MVER` folder. If it doesn't work, try to create the `MVER` folder manually
+> The raw images will be still inside the train folder. To delete those, run `remove_raw.py` (current dir is still `train`)
+> ```
+> py .\remove_raw.py
+> ```
+2. `transform.bat` - mirror the training tiles. The transformed images are saved inside the `train\MVER` folder.
+```
+..\transform.bat
+```
 > [!Note]
-> If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder
+> If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder.
+> ```
+> py ..\move_mver_images.py
+> ```
 3. `cutoff.bat` - script to cut off the training tiles, so that the partially covered bounding boxes were removed as much as possible.
-> [!Warning]
-> Make sure to move all images inside `MVER` folder to directly inside `train` folder (from `train\MVER` to `train`)
 
 ### Convert CSV annotations to YOLOv8 format
 
@@ -37,16 +54,18 @@ The annotations of the dataset are in RetinaNet CSV format:
 **To convert them to YOLOv8 format, run the `convertformat.py` script.**
 The script will create a new folder `labels` inside each `train`, `test`, and `val` folder and save the annotations in YOLOv8 format
 ```
+# back to dataset directory
+cd ..
 # run the script with both train, test, and validation annotations in 1 command
-py convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv
+py .\convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv
 
 # default class names are Zebra, Giraffe, and Elephant or specify the class names by a list
-py convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv Zebra,Giraffe,Elephant
+py .\convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv Zebra,Giraffe,Elephant
 
 # or run the script separately for each annotation file
-py convertformat.py annotations_test.csv
-py convertformat.py annotations_train.csv
-py convertformat.py annotations_val.csv
+py .\convertformat.py annotations_test.csv
+py .\convertformat.py annotations_train.csv
+py .\convertformat.py annotations_val.csv
 
 ```
 > [!IMPORTANT] 
@@ -62,7 +81,11 @@ data
 └── val
     ├── images
     └── labels
-``` 
+```
+Run `setup_yolo_dataset_structure.py` to move images into `images` subfolder inside each `train`, `val`, and `test` set
+```
+py .\setup_yolo_dataset_structure.py
+```
 ### Add YAML file
 YOLOv8 requires a YAML file to train the model. The file should contain the following:
 ```
@@ -82,7 +105,8 @@ Or you can run the `generate_yaml.py` script to generate the YAML file by specif
 ```
 py generate_yaml.py Zebra,Giraffe,Elephant
 ```
-
+## Augmentation
+Coming soon
 ## Display images with bounding boxes 
 Run the `display_bbox.py` (requires: `opencv`) with the following argument:
 - `--data_path`: path to the data directory (which contains two subfolders: `images` and `labels`).
