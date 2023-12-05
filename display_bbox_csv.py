@@ -38,6 +38,7 @@ class BoundingBoxDrawer:
 
 
 if __name__ == "__main__":
+    
     drawer = BoundingBoxDrawer("train", r"D:\tow\data\annotations_images.csv", r"output\train")
     drawer.draw_bboxes()
     drawer = BoundingBoxDrawer("val", r"D:\tow\data\annotations_images.csv", r"output\val")

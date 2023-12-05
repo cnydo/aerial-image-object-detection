@@ -67,6 +67,7 @@ if __name__ == "__main__":
     parser.add_argument('--class_names', metavar='class_names', type=str, nargs='+', default=["Zebra", "Giraffe", "Elephant"],
                         help='a list of class names')
     args = parser.parse_args()
+    # class_names = args.class_names.split(',')
     # Process each input file
     for input_file in args.input_files:
         process_file(input_file, args.class_names)

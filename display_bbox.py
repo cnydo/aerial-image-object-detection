@@ -43,7 +43,8 @@ def display_bbox(
 
     # Display images
     if only_with_bbox:
-        for img_file in tqdm(img_files):
+        for img_file in (pbar:=tqdm(img_files)):
+            pbar.set_description(f"Drawing bounding boxes for {img_file.name}")
             # Read bounding box information from corresponding label file
             label_file = Path(data_path) / "labels" / img_file.with_suffix(".txt").name
             with open(label_file, "r") as f:
@@ -52,7 +53,8 @@ def display_bbox(
                 ]  # Start reading from the second element
 
             # Read image
-            img = cv2.imread(str(img_file))
+            img = cv2.imread(str(img_file.resolve()))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
             # Draw bounding boxes on image
             for bbox in bboxes:
@@ -84,24 +86,31 @@ def display_bbox(
             # save image
             if output_dir is not None:
                 os.makedirs(output_dir, exist_ok=True)
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
                 cv2.imwrite(os.path.join(output_dir, img_file.name), img)
             # Display image
             if display:
-                plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+                plt.imshow(img)
                 plt.title(f"Image name: {img_file.name}")
+                plt.axis("off")
                 plt.show()
-        print(f"Image saved to {output_dir}")
+                
+        print(f"Image saved to {output_dir}") if output_dir is not None else None
     else:  # Display images without bounding boxes
-        for img_file in tqdm(img_files):
-            img = cv2.imread(str(img_file))
+        for img_file in (pbar:=tqdm(img_files)):
+            pbar.set_description(f"Drawing bounding boxes for {img_file.name}")
+            img = cv2.imread(str(img_file.resolve()))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             if display:
-                plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+                plt.imshow(img)
                 plt.title(f"Image name: {img_file.name}")
+                plt.axis("off")
                 plt.show()
             if output_dir is not None:
                 os.makedirs(output_dir, exist_ok=True)
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
                 cv2.imwrite(os.path.join(output_dir, img_file.name), img)
-        print(f"Image saved to {output_dir}")
+        print(f"Image saved to {output_dir}") if output_dir is not None else None
 
 
 def str2bool(v):
@@ -115,12 +124,11 @@ def str2bool(v):
 
 if __name__ == "__main__":
     """
-    - data_path: Path to the data directory.
+    - data_path: Path to the data directory. Must contain 'images' and 'labels' subdirectories.
     - yaml_path: Path to the yaml file with class names.
     - only_with_bbox: Only choose images that have bounding boxes.
     - num_samples: Number of sample images to display (default: 1)
-    - train: Path to the train directory.
-    - output_dir: Path to the directory where the output files will be saved. ??
+    - output_dir: Path to the directory where the output files will be saved. 
     """
     parser = argparse.ArgumentParser(
         description="Display a sample image with bounding boxes."
