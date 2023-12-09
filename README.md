@@ -153,7 +153,7 @@ python setup.py install
 ```
 
 2. Training:
-Run `train.py`
+Run `train.py` (it requires [wandb](https://wandb.ai/site) for logging)
 #### Example usage:
 ```
 cd path/to/datasets/
@@ -164,6 +164,15 @@ python train.py --model_name yolov8n.pt --logging True --data data.yaml --epochs
 #### Args:
 - `--model` (str, optional): path to model file, i.e. yolov8n.pt, yolov8n.yaml
 - `--data` (str, optional): path to data file, i.e. coco128.yaml
+> [!Note]
+> Change the parameter `data` to absolute path of yaml file if the current working dir is not `data/`
+> ```
+> # if current dir is not `data/`
+> py train.py --data path/absolute/to/yaml
+> 
+> # if current dir is data 'data/`
+> py train.py --data data.yaml
+> ```
 - `--epochs` (int, optional): number of epochs to train for. Defaults to 100.
 - `--patience` (int, optional): epochs to wait for no observable improvement for early stopping of training. Defaults to 50.
 - `--batch` (int, optional): number of images per batch (-1 for AutoBatch). Defaults to 16.
@@ -171,7 +180,7 @@ python train.py --model_name yolov8n.pt --logging True --data data.yaml --epochs
 - `--save` (bool, optional): save train checkpoints and predict results. Defaults to False.
 - `--save_period` (int, optional): Save checkpoint every x epochs (disabled if < 1). Defaults to -1.
 - `--cache` (bool, optional): True/ram, disk or False. Use cache for data loading. Defaults to False.
-- `--device` (_type_, optional): device to run on, i.e. cuda device=0 or device=0,1,2,3 or device=cpu. Defaults to None.
+- `--device` (int, list[int], optional): device to run on, i.e. cuda device=0 or device=0,1,2,3 or device=cpu. Defaults to None.
 - `--workers` (int, optional): number of worker threads for data loading (per RANK if DDP). Defaults to 8.
 - `--project` (str, optional): project name. Defaults to "runs".
 - `--name` (str, optional): experiment name. Defaults to "exp".
@@ -205,13 +214,5 @@ python train.py --model_name yolov8n.pt --logging True --data data.yaml --epochs
 - `--val` (bool, optional): validate/test during training. Defaults to True.
 - `--plots` (bool, optional): save plots and images during train/val. Defaults to False.
 -  `--logging` (bool, optional): whether to log to wandb. Default to False
-> [!Important]
-> Change the parameter `data` to absolute path of yaml file if the current working dir is not `data/`
-> ```
-> # if current dir is not `data/`
-> py train.py --data path/absolute/to/yaml
-> 
-> # if current dir is data 'data/`
-> py train.py --data data.yaml
-> ```
+
 
