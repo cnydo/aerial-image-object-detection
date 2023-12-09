@@ -151,18 +151,64 @@ git clone https://github.com/ultralytics/ultralytics
 cd ultralytics
 python setup.py install
 ```
+
 2. Training:
+Run `train.py`
+#### Usage:
 ```
 cd path/to/datasets/
-python train.py
+python train.py --model_name yolov8n.t --data data.yaml --epochs 100 --batch 42 --imgsz 1088 --patience 30 --project detection --name exp --optimizer Adam --resume false --lr0 0.001 --momentum 0.9 --device 0,1,2 --plots True --verbose True --save True
 ```
+#### Args:
+- `--model` (str, optional): path to model file, i.e. yolov8n.pt, yolov8n.yaml
+- `--data` (str, optional): path to data file, i.e. coco128.yaml
+- `--epochs` (int, optional): number of epochs to train for. Defaults to 100.
+- `--patience` (int, optional): epochs to wait for no observable improvement for early stopping of training. Defaults to 50.
+- `--batch` (int, optional): number of images per batch (-1 for AutoBatch). Defaults to 16.
+- `--imgsz` (int, optional): size of input images as integer. Defaults to 640.
+- `--save` (bool, optional): save train checkpoints and predict results. Defaults to False.
+- `--save_period` (int, optional): Save checkpoint every x epochs (disabled if < 1). Defaults to -1.
+- `--cache` (bool, optional): True/ram, disk or False. Use cache for data loading. Defaults to False.
+- `--device` (_type_, optional): device to run on, i.e. cuda device=0 or device=0,1,2,3 or device=cpu. Defaults to None.
+- `--workers` (int, optional): number of worker threads for data loading (per RANK if DDP). Defaults to 8.
+- `--project` (str, optional): project name. Defaults to "runs".
+- `--name` (str, optional): experiment name. Defaults to "exp".
+- `--exist_ok` (bool, optional): whether to overwrite existing experiment. Defaults to False.
+- `--pretrained` (bool, optional): (bool or str) whether to use a pretrained model (bool) or a model to load weights from (str). Defaults to True.
+- `--optimizer` (str, optional): optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]. Defaults to "auto".
+- `--verbose` (bool, optional): whether to print verbose output. Defaults to True.
+- `--seed` (int, optional): random seed for reproducibility. Defaults to 0.
+- `--deterministic` (bool, optional): whether to enable deterministic mode. Defaults to True.
+- `--single_cls` (bool, optional): train multi-class data as single-class. Defaults to True.
+- `--rect` (bool, optional): rectangular training with each batch collated for minimum padding. Defaults to True.
+- `--cos_lr` (bool, optional): use cosine learning rate scheduler. Defaults to False.
+- `--close_mosaic` (int, optional): disable mosaic augmentation for final epochs (0 to disable). Defaults to 10.
+- `--resume` (bool, optional): resume training from last checkpoint. Defaults to False.
+- `--amp` (bool, optional): Automatic Mixed Precision (AMP) training, choices=[True, False]. Defaults to True.
+- `--fraction` (float, optional): dataset fraction to train on (default is 1.0, all images in train set). Defaults to 1.0.
+- `--profile` (bool, optional): profile ONNX and TensorRT speeds during training for loggers. Defaults to False.
+- `--freeze` (Union[int, List, None], optional): (int or list, optional) freeze first n layers, or freeze list of layer indices during training. Defaults to None.
+- `--lr0` (float, optional): initial learning rate (i.e. SGD=1E-2, Adam=1E-3). Defaults to 0.01.
+- `--lrf` (float, optional): final learning rate (lr0 * lrf). Defaults to 0.01.
+- `--momentum` (float, optional): SGD momentum/Adam beta1. Defaults to 0.937.
+- `--weight_decay` (float, optional): optimizer weight decay 5e-4. Defaults to 0.0005.
+- `--warmup_epochs` (float, optional): warmup epochs (fractions ok). Defaults to 3.
+- `--warmup_momentum` (float, optional): warmup initial momentum. Defaults to 0.8.
+- `--warmup_bias_lr` (float, optional): warmup initial bias lr. Defaults to 0.1.
+- `--box` (float, optional): box loss gain. Defaults to 7.5.
+- `--cls` (float, optional): cls loss gain (scale with pixels). Defaults to 0.5.
+- `--dfl` (float, optional): dfl loss gain. Defaults to 1.5.
+- `--label_smoothing` (float, optional): label smoothing (fraction). Defaults to 0.0.
+- `--nbs` (int, optional): nominal batch size. Defaults to 64.
+- `--val` (bool, optional): validate/test during training. Defaults to True.
+- `--plots` (bool, optional): save plots and images during train/val. Defaults to False.
 > [!Important]
 > Change the parameter `data` to absolute path of yaml file if the current working dir is not `data/`
 > ```
 > # if current dir is not `data/`
-> train(data='absolute/path/to/yaml') 
+> py train.py --data path/absolute/to/yaml
 > 
 > # if current dir is data 'data/`
-> train(data='data.yaml')
+> py train.py --data data.yaml
 > ```
 
