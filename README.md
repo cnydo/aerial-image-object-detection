@@ -82,10 +82,27 @@ data
     ├── images
     └── labels
 ```
-Run `setup_yolo_dataset_structure.py` to move images into `images` subfolder inside each `train`, `val`, and `test` set
+Run `setup_yolo_dataset_structure.py` to move images into `images` subfolder inside each `train`, `val`, and `test` set. 
 ```
 py .\setup_yolo_dataset_structure.py
 ```
+### Image Tiling
+You can perform image tiling with `cut_tiles.py` with the following arguments:
+- `folder_path`: path to folder that contains two subfoler `images` and `labels`
+- `--tile_witdh` (default: 900): width of the tile (by pixel)
+- `--tile_height' (default: 900): height of the tile (by pixel)
+- `--tile_overlap` (defauit: 200): Overlap between tiles (by pixel)
+- `--truncated_percent` (default: 0.1): if the percentage of bounding boxes inside tile is below this threshold, it will be ignore
+- `--overwriteFiles` (default: True): overwrite existing files
+```
+# run with default arguments
+py cut_tiles.py val
+py cut_tiles.py test
+
+# run with arguments
+py cut_tiles.py val --tile_width 900 --tile_height 900 --tile_overlap 200 --truncated_percent 0.1 
+```
+This script will cut the images into tiles and re-calculate the bounding boxes
 ### Add YAML file
 YOLOv8 requires a YAML file to train the model. The file should contain the following:
 ```
