@@ -154,10 +154,12 @@ python setup.py install
 
 2. Training:
 Run `train.py`
-#### Usage:
+#### Example usage:
 ```
 cd path/to/datasets/
-python train.py --model_name yolov8n.t --data data.yaml --epochs 100 --batch 42 --imgsz 1088 --patience 30 --project detection --name exp --optimizer Adam --resume false --lr0 0.001 --momentum 0.9 --device 0,1,2 --plots True --verbose True --save True
+python train.py --model_name yolov8n.pt --logging True --data data.yaml --epochs 100 --batch 42 --imgsz 1088
+--patience 30 --project detection --name exp --optimizer Adam --resume False --lr0 0.001
+--momentum 0.9 --device 0,1,2 --plots True --verbose True --save True
 ```
 #### Args:
 - `--model` (str, optional): path to model file, i.e. yolov8n.pt, yolov8n.yaml
@@ -202,6 +204,7 @@ python train.py --model_name yolov8n.t --data data.yaml --epochs 100 --batch 42 
 - `--nbs` (int, optional): nominal batch size. Defaults to 64.
 - `--val` (bool, optional): validate/test during training. Defaults to True.
 - `--plots` (bool, optional): save plots and images during train/val. Defaults to False.
+-  `--logging` (bool, optional): whether to log to wandb. Default to False
 > [!Important]
 > Change the parameter `data` to absolute path of yaml file if the current working dir is not `data/`
 > ```
