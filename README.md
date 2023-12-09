@@ -89,9 +89,10 @@ py .\setup_yolo_dataset_structure.py
 ### Add YAML file
 YOLOv8 requires a YAML file to train the model. The file should contain the following:
 ```
-train: ../train/images
-val: ../valid/images
-test: ../test/images
+path: ../data
+train: train/images
+val: valid/images
+test: test/images
 
 nc: 3
 names: 
@@ -103,6 +104,10 @@ Save the file as `data.yaml` and place it in the `data` folder.
 
 Or you can run the `generate_yaml.py` script to generate the YAML file by specifying the number of classes and the class names:
 ```
+# Default classes is already Zebra, Giraffe, and Elephant
+py generate_yaml.py
+
+# With classes
 py generate_yaml.py Zebra,Giraffe,Elephant
 ```
 ## Augmentation
@@ -129,8 +134,18 @@ git clone https://github.com/ultralytics/ultralytics
 cd ultralytics
 python setup.py install
 ```
-2. Run the training script, refer to [YOLOv8 Docs](https://docs.ultralytics.com/modes/train/) for more details.
+2. Training:
 ```
-yolo task=detect mode=train model=yolov8n.pt data={path to data.yaml} epochs=100 imgsz=640 batch=42 device=-1 plots=True
+cd path/to/datasets/
+python train.py
 ```
+> [!Important]
+> Change the parameter `data` to absolute path of yaml file if the current working dir is not `data/`
+> ```
+> # if current dir is not `data/`
+> train(data='absolute/path/to/yaml') 
+> 
+> # if current dir is data 'data/`
+> train(data='data.yaml')
+> ```
 
