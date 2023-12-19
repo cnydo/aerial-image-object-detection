@@ -1,10 +1,11 @@
 import argparse
-from pathlib import Path
-import matplotlib.pyplot as plt
-import cv2
-import random
-import yaml
 import os
+import random
+from pathlib import Path
+
+import cv2
+import matplotlib.pyplot as plt
+import yaml
 from tqdm import tqdm
 
 
@@ -44,7 +45,7 @@ def display_bbox(
     # Display images
     if only_with_bbox:
         for img_file in (pbar:=tqdm(img_files)):
-            pbar.set_description(f"Drawing bounding boxes for {img_file.name}")
+            pbar.set_description(f"Drawing bounding boxes for {img_file.name:30s}")
             # Read bounding box information from corresponding label file
             label_file = Path(data_path) / "labels" / img_file.with_suffix(".txt").name
             with open(label_file, "r") as f:
@@ -98,7 +99,7 @@ def display_bbox(
         print(f"Image saved to {output_dir}") if output_dir is not None else None
     else:  # Display images without bounding boxes
         for img_file in (pbar:=tqdm(img_files)):
-            pbar.set_description(f"Drawing bounding boxes for {img_file.name}")
+            pbar.set_description(f"Drawing bounding boxes for {img_file.name: 30s}")
             img = cv2.imread(str(img_file.resolve()))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             if display:
