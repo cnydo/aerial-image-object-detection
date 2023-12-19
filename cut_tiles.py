@@ -2,12 +2,13 @@ import argparse
 from math import ceil
 from pathlib import Path
 
+import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import PIL
 from PIL import Image
 from tqdm import tqdm
-
 
 TILES_DIR = {
     "train": Path("train/images/"),
@@ -52,7 +53,7 @@ def read_images_and_labels(folder_path) -> pd.DataFrame:
     folder_path = Path(folder_path)
     data = []
 
-    for image_file in (pbar:=tqdm(folder_path.glob("images/*.jpg"))):
+    for image_file in (pbar := tqdm(folder_path.glob("images/*.jpg"))):
         pbar.set_description(f"Reading images and labels for {image_file.name:30s}")
         image_name = image_file.stem
         label_file = folder_path / "labels" / (image_name + ".txt")
@@ -182,11 +183,21 @@ def cut_tile(
     truncated_percent: float = 0.1,
     _overwriteFiles: bool = True,
 ):
+    """The `cut_tile` function is used to create tiles and save them with their labels into the corresponding folders (\images and \labels).
+
+    Args:
+        data_dir (str): _description_
+        tile_width (int, optional): _description_. Defaults to 900.
+        tile_height (int, optional): _description_. Defaults to 900.
+        tile_overlap (int, optional): _description_. Defaults to 200.
+        truncated_percent (float, optional): _description_. Defaults to 0.1.
+        _overwriteFiles (bool, optional): _description_. Defaults to True.
+    """
     data_dir = Path(data_dir)
     image_list = list(data_dir.glob("images/*.jpg"))
 
     df = read_images_and_labels(data_dir)
-    for img_path in (pbar:=tqdm(image_list)):
+    for img_path in (pbar := tqdm(image_list)):
         pbar.set_description(f"Cutting tiles for {img_path.name:30s}")
         # Open image and related data
         pil_img = Image.open(img_path, mode="r")
@@ -258,22 +269,28 @@ def cut_tile(
                             f.write(" ".join(str(x) for x in tags) + "\n")
 
     remove_raw_images_and_labels(image_list)
+
+
 def remove_raw_images_and_labels(img_list: list):
-    for img_path in (pbar:=tqdm(img_list)):
+    for img_path in (pbar := tqdm(img_list)):
         pbar.set_description(f"Removing raw images and labels for {img_path.name:30s}")
         # Remove image
         Path(img_path).unlink(missing_ok=True)
 
         # Remove label
-        label_path = (Path(f"{img_path.parent.parent.name}/labels/") / img_path.stem).with_suffix(".txt")
+        label_path = (
+            Path(f"{img_path.parent.parent.name}/labels/") / img_path.stem
+        ).with_suffix(".txt")
         Path(label_path).unlink(missing_ok=True)
     print("Done!")
 
-import cv2
-import matplotlib.pyplot as plt
-
 
 def draw_tiles_on_image(img_path):
+    """The `draw_tiles_on_image` function is used to draw tiles on the image.
+
+    Args:
+        img_path (_type_): _description_
+    """
     # Read the image
     img = cv2.imread(str(img_path))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -353,4 +370,3 @@ if __name__ == "__main__":
         args.truncated_percent,
         args.overwriteFiles,
     )
-    # remove_val_raw_image()

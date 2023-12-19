@@ -8,7 +8,7 @@ from tqdm import tqdm
 # Define the paths to the output directories
 output_dirs = ["train/labels", "test/labels", "val/labels"]
 
-def process_file(input_path, class_names=["Zebra", "Giraffe", "Elephant"]):
+def process_file(input_path, class_names: list=["Zebra", "Giraffe", "Elephant"]):
     # Create the output directories if they don't exist
     for output_dir in output_dirs:
         if not os.path.exists(output_dir):

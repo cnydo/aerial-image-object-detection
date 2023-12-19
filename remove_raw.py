@@ -2,7 +2,7 @@ import os
 import re
 import tqdm
 # Remove the original image
-pattern = re.compile(r'^[a-zA-Z0-9_-]+\d+-\d+\.JPG$')
+pattern = re.compile(r'^[a-zA-Z0-9_-]+\d+-\d+\.(?i)(JPG)$')
 count = 0
 # Iterate over files in the current directory
 for filename in (pbar:=tqdm.tqdm(os.listdir('.'))):
