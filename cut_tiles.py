@@ -53,7 +53,7 @@ def read_images_and_labels(folder_path) -> pd.DataFrame:
     folder_path = Path(folder_path)
     data = []
 
-    for image_file in (pbar := tqdm(folder_path.glob("images/*.jpg"))):
+    for image_file in (pbar := tqdm(list(folder_path.glob("images/*.jpg")))):
         pbar.set_description(f"Reading images and labels for {image_file.name:30s}")
         image_name = image_file.stem
         label_file = folder_path / "labels" / (image_name + ".txt")
@@ -218,7 +218,7 @@ def cut_tile(
                 y_start = y_end - tile_height
                 folder = img_path.parent.parent.name
                 save_tile_path = TILES_DIR[folder].joinpath(
-                    img_path.stem + "_" + str(x_start) + "_" + str(y_start) + ".jpg"
+                    img_path.stem + "_" + str(x_start) + "_" + str(y_start) + ".JPG"
                 )
                 save_label_path = LABELS_DIR[folder].joinpath(
                     img_path.stem + "_" + str(x_start) + "_" + str(y_start) + ".txt"
