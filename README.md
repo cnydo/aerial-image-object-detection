@@ -197,8 +197,8 @@ Run `train.py` (it requires [wandb](https://wandb.ai/site) for logging)
 ```
 cd path/to/datasets/
 python train.py --model yolov8n.pt --logging True --data data.yaml --epochs 100 --batch 42 --imgsz 1088
---patience 30 --project detection --name exp --optimizer Adam --resume False --lr0 0.001
---momentum 0.9 --device 0,1,2 --plots True --verbose True --save True
+--patience 30 --project detection --name exp --optimizer Adam --lr0 0.001
+--momentum 0.9 --device 0,1,2 --plots True --save True
 ```
 #### Args:
 - `--model` (str, optional): path to model file, i.e. yolov8n.pt, yolov8n.yaml
@@ -226,11 +226,11 @@ python train.py --model yolov8n.pt --logging True --data data.yaml --epochs 100 
 - `--exist_ok` (bool, optional): whether to overwrite existing experiment. Defaults to False.
 - `--pretrained` (bool, optional): (bool or str) whether to use a pretrained model (bool) or a model to load weights from (str). Defaults to True.
 - `--optimizer` (str, optional): optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]. Defaults to "auto".
-- `--verbose` (bool, optional): whether to print verbose output. Defaults to True.
+- `--verbose` (bool, optional): whether to print verbose output. Defaults to False.
 - `--seed` (int, optional): random seed for reproducibility. Defaults to 0.
 - `--deterministic` (bool, optional): whether to enable deterministic mode. Defaults to True.
 - `--single_cls` (bool, optional): train multi-class data as single-class. Defaults to True.
-- `--rect` (bool, optional): rectangular training with each batch collated for minimum padding. Defaults to True.
+- `--rect` (bool, optional): rectangular training with each batch collated for minimum padding. Defaults to False.
 - `--cos_lr` (bool, optional): use cosine learning rate scheduler. Defaults to False.
 - `--close_mosaic` (int, optional): disable mosaic augmentation for final epochs (0 to disable). Defaults to 10.
 - `--resume` (bool, optional): resume training from last checkpoint. Defaults to False.
@@ -251,7 +251,7 @@ python train.py --model yolov8n.pt --logging True --data data.yaml --epochs 100 
 - `--label_smoothing` (float, optional): label smoothing (fraction). Defaults to 0.0.
 - `--nbs` (int, optional): nominal batch size. Defaults to 64.
 - `--val` (bool, optional): validate/test during training. Defaults to True.
-- `--plots` (bool, optional): save plots and images during train/val. Defaults to False.
--  `--logging` (bool, optional): whether to log to wandb. Default to False
+- `--plots` (bool, optional): save plots and images during train/val. Defaults to True.
+-  `--logging` (bool, optional): whether to log to wandb. Default to True.
 
 
