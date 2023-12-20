@@ -17,7 +17,7 @@ def train(
     save: bool = False,
     save_period: int = -1,
     cache: bool = False,
-    device=None,
+    device = None,
     workers: int = 8,
     project: str = "runs",
     name: str = "exp",
@@ -28,7 +28,7 @@ def train(
     seed: int = 0,
     deterministic: bool = True,
     single_cls: bool = True,
-    rect: bool = True,
+    rect: bool = False,
     cos_lr: bool = False,
     close_mosaic: int = 10,
     resume: bool = False,
@@ -44,7 +44,7 @@ def train(
     warmup_momentum: float = 0.8,
     warmup_bias_lr: float = 0.1,
     box: float = 7.5,
-    cls: float = 0.5,
+    cls_loss: float = 0.5,
     dfl: float = 1.5,
     label_smoothing: float = 0.0,
     nbs: int = 64,
@@ -99,22 +99,22 @@ def train(
     """
 
     model = YOLO(model)
-    results = model.train(
+    model.train(
         data=data,
         epochs=epochs,
         patience=patience,
-        batch_size=batch,
+        batch=batch,
         imgsz=imgsz,
         save=save,
         save_period=save_period,
-        cache_images=cache,
+        cache=cache,
         device=device,
         workers=workers,
         project=project,
         name=name,
         exist_ok=exist_ok,
         pretrained=pretrained,
-        opt=optimizer,
+        optimizer=optimizer,
         verbose=verbose,
         seed=seed,
         single_cls=single_cls,
@@ -131,10 +131,10 @@ def train(
         warmup_epochs=warmup_epochs,
         warmup_momentum=warmup_momentum,
         warmup_bias_lr=warmup_bias_lr,
-        box_loss_gain=box,
-        cls_loss_gain=cls,
+        box=box,
+        cls=cls_loss,
         label_smoothing=label_smoothing,
-        dfl_loss_gain=dfl,
+        dfl=dfl,
         nbs=nbs,
         val=val,
         plots=plots,
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model",
-        type=str,
+        type=Path,
         default="yolov8n.pt",
         required=True,
         help="path to model file, i.e. yolov8n.pt, yolov8n.yaml",
@@ -259,7 +259,7 @@ if __name__ == "__main__":
         help="optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]",
     )
     parser.add_argument(
-        "--verbose", type=str2bool, default=True, help="whether to print verbose output"
+        "--verbose", type=str2bool, default=False, help="whether to print verbose output"
     )
     parser.add_argument(
         "--seed", type=int, default=0, help="random seed for reproducibility"
@@ -273,13 +273,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--single_cls",
         type=str2bool,
-        default=True,
+        default=False,
         help="train multi-class data as single-class",
     )
     parser.add_argument(
         "--rect",
         type=str2bool,
-        default=True,
+        default=False,
         help="rectangular training with each batch collated for minimum padding",
     )
     parser.add_argument(
@@ -327,7 +327,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--lr0",
         type=float,
-        default=0.001,
+        default=0.01,
         help="initial learning rate (i.e. SGD=1E-2, Adam=1E-3)",
     )
     parser.add_argument(
@@ -377,50 +377,51 @@ if __name__ == "__main__":
         # start logging
         wandb.login(relogin=True)
         wandb.init(project=args.project, name=args.name)
-
+    else:
+        settings.update({"wandb": False})
     train(
-        args.model,
-        args.data,
-        args.epochs,
-        args.patience,
-        args.batch,
-        args.imgsz,
-        args.save,
-        args.save_period,
-        args.cache,
-        args.device,
-        args.workers,
-        args.project,
-        args.name,
-        args.exist_ok,
-        args.pretrained,
-        args.optimizer,
-        args.verbose,
-        args.seed,
-        args.deterministic,
-        args.single_cls,
-        args.rect,
-        args.cos_lr,
-        args.close_mosaic,
-        args.resume,
-        args.amp,
-        args.fraction,
-        args.profile,
-        args.freeze,
-        args.lr0,
-        args.lrf,
-        args.momentum,
-        args.weight_decay,
-        args.warmup_epochs,
-        args.warmup_momentum,
-        args.warmup_bias_lr,
-        args.box,
-        args.cls,
-        args.dfl,
-        args.label_smoothing,
-        args.nbs,
-        args.val,
-        args.plots,
+        model = args.model.resolve(),
+        data = args.data.resolve(),
+        epochs = args.epochs,
+        patience = args.patience,
+        batch = args.batch,
+        imgsz = args.imgsz,
+        save = args.save,
+        save_period = args.save_period,
+        cache = args.cache,
+        device = args.device,
+        workers = args.workers,
+        project = args.project,
+        name = args.name,
+        exist_ok = args.exist_ok,
+        pretrained = args.pretrained,
+        optimizer = args.optimizer,
+        verbose = args.verbose,
+        seed = args.seed,
+        deterministic = args.deterministic,
+        single_cls = args.single_cls,
+        rect = args.rect,
+        cos_lr = args.cos_lr,
+        close_mosaic = args.close_mosaic,
+        resume = args.resume,
+        amp = args.amp,
+        fraction =args.fraction,
+        profile = args.profile,
+        freeze = args.freeze,
+        lr0 = args.lr0,
+        lrf = args.lrf,
+        momentum = args.momentum,
+        weight_decay = args.weight_decay,
+        warmup_epochs = args.warmup_epochs,
+        warmup_momentum = args.warmup_momentum,
+        warmup_bias_lr = args.warmup_bias_lr,
+        box = args.box,
+        cls_loss = args.cls,
+        dfl = args.dfl,
+        label_smoothing = args.label_smoothing,
+        nbs = args.nbs,
+        val = args.val,
+        plots = args.plots,
     )
     
     # end logging
