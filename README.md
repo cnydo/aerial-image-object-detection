@@ -100,10 +100,47 @@ Below is the expression used to calculate the number of tiles along a dimension 
  n_{tiles} = \underbrace{\left \lceil \frac{\text{size}_{img}}{\text{size}_{tile}}\right \rceil}_{\alpha}
 + \left \lceil \frac{\text{size}_{img} - \left ( \alpha \cdot \text{size}_{tile} - \text{overlap} \cdot \left ( \alpha - 1 \right ) \right )}{\text{size}_{tile} - \text{overlap}}\right \rceil
 ```
-For example, `train\DPP_00418` has size of $`4603 \times 3068`$, with the size of each tile is $`900 \times 900`$ and desired overlap is $`200`$. If $`overlap`$ is $0$, the width dimension ($4603px$) only need $`\alpha =  \left \lceil  \frac{4603}{900} \right \rceil = 6`$ tiles. But with $`\text{overlap}=200`$, $6$ tiles only occupy $`6 \cdot 900 - 200 \cdot 5 = 4400`$. The remaining width are $4603-4400=203$ and we divide this with $900-200=700$. Take result into ceiling function and add it to $`\alpha`$ and we got $7$ as the final number of tiles that can fit the width dimension. Doing the same for the height dimension we'll get $5$. In summary we'll get $35$ tiles for this images
+For example, `train\DPP_00418` has size of $`4603 \times 3068`$, with the size of each tile is $`900 \times 900`$ and desired overlap is $`200`$. If $`overlap`$ is $0$, the width dimension ($4603px$) only need $`\alpha =  \left \lceil  \frac{4603}{900} \right \rceil = 6`$ tiles. But with $`\text{overlap}=200`$, $6$ tiles only occupy $`6 \cdot 900 - 200 \cdot 5 = 4400`$. The remaining width are $4603-4400=203$ and we divide this with $900-200=700$. Take result into ceiling function and add it to $`\alpha`$ and we got $7$ as the final number of tiles that can fit the width dimension. Doing the same for the height dimension we'll get $5$. In summary we'll get $35$ tiles for this images.
+```
+x_start = 0, y_start = 0, x_end = 900, y_end = 900
+x_start = 0, y_start = 700, x_end = 900, y_end = 1600
+x_start = 0, y_start = 1400, x_end = 900, y_end = 2300
+x_start = 0, y_start = 2100, x_end = 900, y_end = 3000
+x_start = 0, y_start = 2168, x_end = 900, y_end = 3068
+x_start = 700, y_start = 0, x_end = 1600, y_end = 900
+x_start = 700, y_start = 700, x_end = 1600, y_end = 1600
+x_start = 700, y_start = 1400, x_end = 1600, y_end = 2300
+x_start = 700, y_start = 2100, x_end = 1600, y_end = 3000
+x_start = 700, y_start = 2168, x_end = 1600, y_end = 3068
+x_start = 1400, y_start = 0, x_end = 2300, y_end = 900
+x_start = 1400, y_start = 700, x_end = 2300, y_end = 1600
+x_start = 1400, y_start = 1400, x_end = 2300, y_end = 2300
+x_start = 1400, y_start = 2100, x_end = 2300, y_end = 3000
+x_start = 1400, y_start = 2168, x_end = 2300, y_end = 3068
+x_start = 2100, y_start = 0, x_end = 3000, y_end = 900
+x_start = 2100, y_start = 700, x_end = 3000, y_end = 1600
+x_start = 2100, y_start = 1400, x_end = 3000, y_end = 2300
+x_start = 2100, y_start = 2100, x_end = 3000, y_end = 3000
+x_start = 2100, y_start = 2168, x_end = 3000, y_end = 3068
+x_start = 2800, y_start = 0, x_end = 3700, y_end = 900
+x_start = 2800, y_start = 700, x_end = 3700, y_end = 1600
+x_start = 2800, y_start = 1400, x_end = 3700, y_end = 2300
+x_start = 2800, y_start = 2100, x_end = 3700, y_end = 3000
+x_start = 2800, y_start = 2168, x_end = 3700, y_end = 3068
+x_start = 3500, y_start = 0, x_end = 4400, y_end = 900
+x_start = 3500, y_start = 700, x_end = 4400, y_end = 1600
+x_start = 3500, y_start = 1400, x_end = 4400, y_end = 2300
+x_start = 3500, y_start = 2100, x_end = 4400, y_end = 3000
+x_start = 3500, y_start = 2168, x_end = 4400, y_end = 3068
+x_start = 3703, y_start = 0, x_end = 4603, y_end = 900
+x_start = 3703, y_start = 700, x_end = 4603, y_end = 1600
+x_start = 3703, y_start = 1400, x_end = 4603, y_end = 2300
+x_start = 3703, y_start = 2100, x_end = 4603, y_end = 3000
+x_start = 3703, y_start = 2168, x_end = 4603, y_end = 3068
+```
 |![train\DPP_00418.JPG](Figure_1.png)|
 |:--:|
-|*Test*|
+|*This figure depicts the tiles on the image. Start from left to right, top to bottom.* |
 
 
 ### Convert CSV annotations to YOLOv8 format
