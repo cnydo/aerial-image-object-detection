@@ -12,38 +12,99 @@ If you use this dataset, please cite the following paper:
 https://doi.org/10.1111/2041-210X.13277
 
 ## Preprocessing
+### Rotating images with wrong orientation
 > [!CAUTION]
-> The dataset contains some images that are wrongly rotated upside down (180 degrees) for an unknown reason. Rotate them back by 180 degrees to correct the orientation. 
-> 
-> Firstly, run `rotate_wrong_oriented_img.py` to quickly rotate images are listed in `list of wrong oriented image.txt`
-> ```
-> py .\rotate_wrong_oriented_img.py
-> ```
+> The dataset contains some images that are wrongly rotated upside down (180 degrees) for an unknown reason. Rotate them back by 180 degrees to correct the orientation.
 
+Firstly, run `rotate_wrong_oriented_img.py` to quickly rotate images are listed in `list of wrong oriented image.txt`
+```
+py .\rotate_wrong_oriented_img.py
+```
+### Generate new annotations_train.csv
+> [!CAUTION]
+> The author provided a `annotations_trains.csv` file which contains the labels of tiles (image after cutting). We'll have to make a different `annotations_train.csv` to use for later
 
-### Tiling images
+Run `generate_annotation_train.py`:
+```
+py .\generate_annotation_train.py
+```
+### Convert CSV annotations to YOLOv8 format
 
-The authors of the paper have provided [ImageMagick](https://imagemagick.org/script/download.php) scripts  to preprocess the training images. They should be run on the `train` folder in the following order:
-1. `tiles.bat` - cut the raw images into training tiles. Each images is divided into $7 \times 6$ tiles with $200$ pixels overlap.
+The annotations of the dataset are in RetinaNet CSV format:
+- `annotation_images.csv` is the raw annotations file.
+- `annotation_test.csv, annotation_train.csv, annotation_train.csv` are the annotations that were used for testing, training, and validation respectively.
+
+**To convert them to YOLOv8 format, run the `convertformat.py` script.**
+The script will create a new folder `labels` inside each `train`, `test`, and `val` folder and save the annotations in YOLOv8 format
 ```
-cd train
-..\tiles.bat
+# run the script with both train, test, and validation annotations in 1 command
+py .\convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv
+
+# default class names are Zebra, Giraffe, and Elephant or specify the class names by a list
+py .\convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv Zebra,Giraffe,Elephant
+
+# or run the script separately for each annotation file
+py .\convertformat.py annotations_test.csv
+py .\convertformat.py annotations_train.csv
+py .\convertformat.py annotations_val.csv
 ```
-> [!Important]
-> The raw images will be still inside the train folder. To delete those, run `remove_raw.py` (current dir is still `train`)
-> ```
-> py .\remove_raw.py
-> ```
-2. `transform.bat` - mirror the training tiles. The transformed images are saved inside the `train\MVER` folder.
+After this step the dataset structure should be like this:
 ```
-..\transform.bat
+data
+├───test         (112 images + 1 subfolder)
+│   └───labels   (112 files .txt)
+├───train        (393 images + 1 subfolder)
+│   └───labels   (393 files .txt)
+└───val          (56 images + 1 subfolder)
+    └───labels   (56 files .txt
 ```
-> [!Note]
-> If we save transformed images directly under the `train` folder the script will loop infinitely. Hence we have save them in a distinct subfolder `MVER` then move it back to `train` folder.
-> ```
-> py ..\move_mver_images.py
-> ```
-3. `cutoff.bat` - script to cut off the training tiles, so that the partially covered bounding boxes were removed as much as possible.
+### Setup YOLOv8 dataset structure:
+Run `setup_yolo_dataset_structure.py` to move images into `images` subfolder inside each `train`, `val`, and `test` set. 
+```
+py .\setup_yolo_dataset_structure.py
+```
+After this step the dataset structure should look like this:
+```
+data
+├───test
+│   ├───images (112 images)
+│   └───labels (112 files .txt)
+├───train
+│   ├───images (393 images)
+│   └───labels (393 files .txt)
+└───val 
+    ├───images (56 images)
+    └───labels (56 files .txt)
+```
+### Image tiling
+Run `cut_tiles.py` to start image tiling:
+```
+# Run with default arguments
+py .\cut_tiles.py train test val
+
+# Run with custom arguments
+py .\cut_tiles.py train test val --tile_width 900 --tile_height 900 --tile_overlap 200 --truncated_percent 0.3 
+```
+**Args**:
+- `folder_path`(str, multiple args): path to the folders containing two subfolder `images` and `labels` (train, test, val)
+- `--tile_witdh` (default: 900): width of the tile (by pixel)
+- `--tile_height` (default: 900): height of the tile (by pixel)
+- `--tile_overlap` (defauit: 200): Overlap between tiles (by pixel)
+- `--truncated_percent` (default: 0.1): if the percentage of bounding boxes inside tile is below this threshold, it will be ignore
+- `--overwriteFiles` (default: True): overwrite existing files
+- 
+**Explain**:
+  
+Below is the expression used to calculate the number of tiles along a dimension of image (either width or height). The first part calculates the minium number of tiles with no overlap that can occupy all the image along one dimension (width or height). The second part calculates the number of tiles needed to fill in the space left behind when the $`\alpha`$ tiles overlap each other 
+```math
+ n_{tiles} = \underbrace{\left \lceil \frac{\text{size}_{img}}{\text{size}_{tile}}\right \rceil}_{\alpha}
++ \left \lceil \frac{\text{size}_{img} - \left ( \alpha \cdot \text{size}_{tile} - \text{overlap} \cdot \left ( \alpha - 1 \right ) \right )}{\text{size}_{tile} - \text{overlap}}\right \rceil
+```
+For example, `train\DPP_00418` has size of $`4603 \times 3068`$, with the size of each tile is $`900 \times 900`$ and desired overlap is $`200`$. If $`overlap`$ is $0$, the width dimension ($4603px$) only need $`\alpha =  \left \lceil  \frac{4603}{900} \right \rceil = 6`$ tiles. But with $`\text{overlap}=200`$, $6$ tiles only occupy $`6 \cdot 900 - 200 \cdot 5 = 4400`$. The remaining width are $4603-4400=203$ and we divide this with $900-200=700$. Take result into ceiling function and add it to $`\alpha`$ and we got $7$ as the final number of tiles that can fit the width dimension. Doing the same for the height dimension we'll get $5$. In summary we'll get $35$ tiles for this images
+|![train\DPP_00418.JPG](Figure_1.png)|
+|:--:|
+|*Test*|
+
 
 ### Convert CSV annotations to YOLOv8 format
 
