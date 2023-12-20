@@ -142,65 +142,6 @@ x_start = 3703, y_start = 2168, x_end = 4603, y_end = 3068
 |:--:|
 |*This figure depicts the tiles on the image. Start from left to right, top to bottom.* |
 
-
-### Convert CSV annotations to YOLOv8 format
-
-The annotations of the dataset are in RetinaNet CSV format:
-- `annotation_images.csv` is the raw annotations file.
-- `annotation_test.csv, annotation_train.csv, annotation_train.csv` are the annotations that were used for testing, training, and validation respectively.
-
-**To convert them to YOLOv8 format, run the `convertformat.py` script.**
-The script will create a new folder `labels` inside each `train`, `test`, and `val` folder and save the annotations in YOLOv8 format
-```
-# back to dataset directory
-cd ..
-# run the script with both train, test, and validation annotations in 1 command
-py .\convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv
-
-# default class names are Zebra, Giraffe, and Elephant or specify the class names by a list
-py .\convertformat.py annotations_test.csv annotations_train.csv annotations_val.csv Zebra,Giraffe,Elephant
-
-# or run the script separately for each annotation file
-py .\convertformat.py annotations_test.csv
-py .\convertformat.py annotations_train.csv
-py .\convertformat.py annotations_val.csv
-
-```
-> [!IMPORTANT] 
-> YOLO locates labels automatically for each image by replacing the last instance of `/images` in each images path with  `/labels`. Organize the dataset structure as follows (`images` folder contains the images and `labels` folder contains the annotations files):
-```
-data
-├── train
-│   ├── images
-│   ├── labels
-├── test
-│   ├── images
-│   └── labels
-└── val
-    ├── images
-    └── labels
-```
-Run `setup_yolo_dataset_structure.py` to move images into `images` subfolder inside each `train`, `val`, and `test` set. 
-```
-py .\setup_yolo_dataset_structure.py
-```
-### Image Tiling
-You can perform image tiling with `cut_tiles.py` with the following arguments:
-- `folder_path`: path to folder that contains two subfoler `images` and `labels`
-- `--tile_witdh` (default: 900): width of the tile (by pixel)
-- `--tile_height' (default: 900): height of the tile (by pixel)
-- `--tile_overlap` (defauit: 200): Overlap between tiles (by pixel)
-- `--truncated_percent` (default: 0.1): if the percentage of bounding boxes inside tile is below this threshold, it will be ignore
-- `--overwriteFiles` (default: True): overwrite existing files
-```
-# run with default arguments
-py cut_tiles.py val
-py cut_tiles.py test
-
-# run with arguments
-py cut_tiles.py val --tile_width 900 --tile_height 900 --tile_overlap 200 --truncated_percent 0.1 
-```
-This script will cut the images into tiles and re-calculate the bounding boxes
 ### Add YAML file
 YOLOv8 requires a YAML file to train the model. The file should contain the following:
 ```
