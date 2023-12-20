@@ -196,7 +196,7 @@ Run `train.py` (it requires [wandb](https://wandb.ai/site) for logging)
 #### Example usage:
 ```
 cd path/to/datasets/
-python train.py --model_name yolov8n.pt --logging True --data data.yaml --epochs 100 --batch 42 --imgsz 1088
+python train.py --model yolov8n.pt --logging True --data data.yaml --epochs 100 --batch 42 --imgsz 1088
 --patience 30 --project detection --name exp --optimizer Adam --resume False --lr0 0.001
 --momentum 0.9 --device 0,1,2 --plots True --verbose True --save True
 ```
