@@ -22,9 +22,8 @@ py .\rotate_wrong_oriented_img.py
 ```
 ### Generate new annotations_train.csv
 > [!CAUTION]
-> The author provided a `annotations_trains.csv` file which contains the labels of tiles (image after cutting). We'll have to make a different `annotations_train.csv` to use for later
-
-Run `generate_annotation_train.py`:
+> The author provided a `annotations_trains.csv` file which contains the labels of tiles (image after cutting). We'll a different image tiling method so we need to make a different `annotations_train.csv`.
+Run `generate_annotation_train.py`. This will extract labels from `annotations_images.csv` to produce `annotations_train.csv`:
 ```
 py .\generate_annotation_train.py
 ```
