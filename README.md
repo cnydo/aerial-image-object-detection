@@ -156,6 +156,14 @@ names:
   1: Giraffe
   2: Elephant
 ```
+> [!WARNING]
+> This is assuming that `train`,`test`,`val` are inside `data` folder. In some cases, if your training won't start because it can't found the data, try modifying the settings directly:
+> ```
+> from ultralytics import settings
+> 
+> # Update dataset directory
+> settings.update({'datasets_dir': '/the/absolute/path/to/your/data/folder'})
+> ```
 Save the file as `data.yaml` and place it in the `data` folder. 
 
 Or you can run the `generate_yaml.py` script to generate the YAML file by specifying the number of classes and the class names:
