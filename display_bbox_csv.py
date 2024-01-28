@@ -13,7 +13,8 @@ class BoundingBoxDrawer:
         os.makedirs(self.output_dir, exist_ok=True)
 
     def draw_bboxes(self):
-        for filename in tqdm(os.listdir(self.image_dir)):
+        for filename in (pbar:=tqdm(os.listdir(self.image_dir))):
+            pbar.set_description(f"Processing {filename:20s}")
             if filename in self.labels.index:
                 img_path = os.path.join(self.image_dir, filename)
                 try:
@@ -35,10 +36,11 @@ class BoundingBoxDrawer:
                 # Save image
                 output_path = os.path.join(self.output_dir, filename)
                 cv2.imwrite(output_path, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-
+        print(f"Processed {len(os.listdir(self.image_dir))} images. Output files saved to {self.output_dir}")
 
 if __name__ == "__main__":
-    
+    drawer = BoundingBoxDrawer("test", r"D:\tow\data\annotations_images.csv", r"output\test")
+    drawer.draw_bboxes()
     drawer = BoundingBoxDrawer("train", r"D:\tow\data\annotations_images.csv", r"output\train")
     drawer.draw_bboxes()
     drawer = BoundingBoxDrawer("val", r"D:\tow\data\annotations_images.csv", r"output\val")
