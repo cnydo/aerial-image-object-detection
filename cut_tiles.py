@@ -137,12 +137,12 @@ def tag_is_inside_tile(
     # Determine if a tag (bounding box) is completely or partially inside a tile.
     x_max_trunc = min(x_max, tile_width)
     x_min_trunc = max(x_min, 0)
-    if (x_max_trunc - x_min_trunc) / (x_max - x_min) < truncated_percent:
+    if (((x_max_trunc - x_min_trunc) / (x_max - x_min)) < truncated_percent):
         return None
 
     y_max_trunc = min(y_max, tile_width)
     y_min_trunc = max(y_min, 0)
-    if (y_max_trunc - y_min_trunc) / (y_max - y_min) < truncated_percent:
+    if (((y_max_trunc - y_min_trunc) / (y_max - y_min)) < truncated_percent):
         return None
 
     # Calculate the relative coordinates of the bounding box in the tile.
@@ -166,10 +166,19 @@ def get_num_tiles(image_size: int, tile_size: int, tile_overlap: int) -> int:
     Returns:
         int: number of tiles that can fit in the image with overlapping
     """
-    num_tiles_not_overlapping = ceil(image_size / tile_size)
-    remainder = image_size - (
-        num_tiles_not_overlapping * tile_size
-        - tile_overlap * (num_tiles_not_overlapping - 1)
+    try:
+        num_tiles_not_overlapping = ceil(image_size / tile_size)
+        assert num_tiles_not_overlapping >= 1
+    except AssertionError:
+        raise ValueError("Tile size must be smaller than or equal to the image size")
+    remainder = (
+        image_size
+        - (
+            num_tiles_not_overlapping * tile_size
+            - tile_overlap * (num_tiles_not_overlapping - 1)
+        )
+        if tile_overlap > 0
+        else 0
     )
     return ceil(image_size / tile_size) + ceil((remainder) / (tile_size - tile_overlap))
 
@@ -180,7 +189,7 @@ def cut_tile(
     tile_width: int = 900,
     tile_height: int = 900,
     tile_overlap: int = 200,
-    truncated_percent: float = 0.1,
+    truncated_percent: float = 0.3,
     _overwriteFiles: bool = True,
 ):
     """The `cut_tile` function is used to create tiles and save them with their labels into the corresponding folders (\images and \labels).
@@ -223,11 +232,10 @@ def cut_tile(
                 save_label_path = LABELS_DIR[folder].joinpath(
                     img_path.stem + "_" + str(x_start) + "_" + str(y_start) + ".txt"
                 )
-
                 # Save if file doesn't exit
                 if _overwriteFiles or not Path(save_label_path).is_file():
                     cut_tile = np.zeros(
-                        shape=(tile_width, tile_height, 3), dtype=np.uint8
+                        shape=(tile_height, tile_width, 3), dtype=np.uint8
                     )
                     cut_tile[0:tile_height, 0:tile_width, :] = np_img[
                         y_start:y_end, x_start:x_end, :
@@ -235,12 +243,6 @@ def cut_tile(
                     cut_tile_img = PIL.Image.fromarray(cut_tile)
                     cut_tile_img.save(save_tile_path)
 
-                # found_tags = [
-                #     tag_is_inside_tile(
-                #         bounds, x_start, y_start, TILE_WIDTH, TILE_HEIGHT, TRUNCATED_PERCENT
-                #     )
-                #     for () in img_labels.iterrows[['top_left_x', 'top_left_y', 'bottom_right_x', 'bottom_right_y']]
-                # ]
                 found_tags = []
                 for row in img_labels[
                     [
@@ -292,7 +294,7 @@ def draw_tiles_on_image(img_path):
         img_path (_type_): _description_
     """
     # Read the image
-    img = cv2.imread(str(img_path))
+    img = cv2.imread(str(Path(img_path).resolve()))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     # Get the dimensions of the image
     IMAGE_HEIGHT, IMAGE_WIDTH, _ = img.shape
@@ -319,7 +321,7 @@ def draw_tiles_on_image(img_path):
             print(f"{x_start = }, {y_start = }, {x_end = }, {y_end = }")
     # Save the image with the border
     cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    cv2.imwrite("image_with_tiles_DPP_00418.jpg", img)
+    cv2.imwrite("image_with_tiles_border_{img_path}.jpg", img)
     plt.imshow(img)
     plt.show()
 
@@ -329,6 +331,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "folder_path",
         type=str,
+        nargs="+",
         help="Path to the folder containing images and labels",
     )
     parser.add_argument(
@@ -352,7 +355,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--truncated_percent",
         type=float,
-        default=0.1,
+        default=0.3,
         help="Truncated percentage",
     )
     parser.add_argument(
@@ -362,11 +365,18 @@ if __name__ == "__main__":
         help="Overwrite existing files",
     )
     args = parser.parse_args()
-    cut_tile(
-        args.folder_path,
-        args.tile_width,
-        args.tile_height,
-        args.tile_overlap,
-        args.truncated_percent,
-        args.overwriteFiles,
-    )
+    if args.tile_width < 1 or args.tile_height < 1:
+        raise ValueError(
+            "Tile width and height must be greater than or equal to 1 pixel"
+        )
+    elif args.tile_overlap < 0:
+        raise ValueError("Tile overlap must be greater than or equal to 0 pixel")
+    for folder_path in args.folder_path:
+        cut_tile(
+            folder_path,
+            args.tile_width,
+            args.tile_height,
+            args.tile_overlap,
+            args.truncated_percent,
+            args.overwriteFiles,
+        )
