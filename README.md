@@ -56,7 +56,7 @@ data
 ├───train        (393 images + 1 subfolder)
 │   └───labels   (393 files .txt)
 └───val          (56 images + 1 subfolder)
-    └───labels   (56 files .txt
+    └───labels   (56 files .txt)
 ```
 ### Setup YOLOv8 dataset structure:
 Run `setup_yolo_dataset_structure.py` to move images into `images` subfolder inside each `train`, `val`, and `test` set. 
